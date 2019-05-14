@@ -6,14 +6,13 @@ This script will check if any ".blend" file appear in the a folder,
 if it does, will move the file to a target folder.
 @author: alice
 """
-from ftplib import FTP
 import os 
 import time
 import os.path
+import ftplib
 
-from ftplib import FTP 
 import os
-import fileinput
+
 #import shutil
 
 #####################create your paths######################
@@ -43,22 +42,30 @@ def moveFile(fileName):
    oldLocation = pathWatch + '\\' + str(fileName) 
    newLocation = pathTarget+ '\\' + str(fileName)
    
-   os.rename(oldLocation,newLocation)
+#   os.rename(oldLocation,newLocation)
 #   shutil.move(oldLocation,newLocation)
 
-#-----------------------------------------------------------
 
+   serverAddress='10.10.10.10'
+   userName='render1'
+   password='password'
+   currentTime=time.strftime("%Y_%m_%d_%H_%M_%S")
+   session = ftplib.FTP(serverAddress,userName,password)
+   file = open(oldLocation,'rb')                  # file to send
+   session.storbinary('userName'+str(currentTime), file)     # send the file
+   file.close()                                    # close file and FTP
+   session.quit()
     
-    ftp = FTP()
-    ftp.set_debuglevel(2)
-    ftp.connect('ec2-18-220-233-157.us-east-2.compute.amazonaws.com', 21) 
-    ftp.login()
-     
-    ftp.cwd('/upload')
-    
-    fp = open(localfile, 'rb')
-    ftp.storbinary('STOR %s' % os.path.basename(oldFile), fp, 1024)
-    fp.close()
+#   ftp = ftp()
+#   ftp.set_debuglevel(2)
+#   ftp.connect('ec2-18-220-233-157.us-east-2.compute.amazonaws.com', 21) 
+#   ftp.login()
+#     
+#   ftp.cwd('/upload')
+#    
+#   fp = open(oldLocation, 'rb')
+#   ftp.storbinary('STOR %s' % os.path.basename(oldLocation), fp, 1024)
+#   fp.close()
 
 
 
@@ -66,10 +73,12 @@ def moveFile(fileName):
 #-----------------------------------------------------------
 #checkinf every 3 seconds and attempt to move the file
 
-if __name__ == "__main__":
-    while True:
-        try:
-            moveFile(blendFileExist())
-        except:
-            pass
-        time.sleep(3)
+#if __name__ == "__main__":
+#    while True:
+#        try:
+#            moveFile(blendFileExist())
+#        except:
+#            pass
+#        time.sleep(3)
+
+#-----------------------------------------------------------
